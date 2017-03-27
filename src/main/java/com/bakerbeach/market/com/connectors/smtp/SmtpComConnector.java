@@ -16,6 +16,7 @@ import javax.mail.internet.MimeMessage;
 import com.bakerbeach.market.com.api.ComConnector;
 import com.bakerbeach.market.com.api.ComConnectorException;
 import com.bakerbeach.market.com.api.DataMapKeys;
+import com.bakerbeach.market.com.connectors.smtp.velocity.Formater;
 
 public class SmtpComConnector implements ComConnector {
 
@@ -38,6 +39,7 @@ public class SmtpComConnector implements ComConnector {
 		Session session = Session.getDefaultInstance(properties, auth);
 
 		try {
+			dataMap.put("formater", new Formater());
 			Message msg = new MimeMessage(session);
 
 			msg.setFrom(new InternetAddress((String) properties.get("mail.smtp.sender")));
