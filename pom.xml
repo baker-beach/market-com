@@ -45,7 +45,7 @@
 		<dependency>
 			<groupId>com.bakerbeach.market</groupId>
 			<artifactId>market-com-api</artifactId>
-			<version>1.0.0</version>
+			<version>[1.0.1,1.1.0]</version>
 		</dependency>
 	</dependencies>
 </project>
