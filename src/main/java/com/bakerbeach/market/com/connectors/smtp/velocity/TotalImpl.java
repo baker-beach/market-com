@@ -9,6 +9,9 @@ import com.bakerbeach.market.core.api.model.TaxCode;
 import com.bakerbeach.market.core.api.model.Total;
 
 public class TotalImpl implements Total, Serializable {
+
+	private static final long serialVersionUID = 1L;
+	
 	protected String qualifier;
 	protected BigDecimal gross = BigDecimal.ZERO;
 	protected BigDecimal net = BigDecimal.ZERO;

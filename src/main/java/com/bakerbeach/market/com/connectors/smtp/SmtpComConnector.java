@@ -1,33 +1,5 @@
 package com.bakerbeach.market.com.connectors.smtp;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import com.bakerbeach.market.com.api.ComConnector;
-import com.bakerbeach.market.com.api.ComConnectorException;
-
-public class SmtpComConnector implements ComConnector {
-	
-	private Map<String, String> bcc = new HashMap<String, String>();
-
-	@Override
-	public void generateMessageAndSend(String messageType, Map<String, Object> data) throws ComConnectorException {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public Map<String, String> getBcc() {
-		return bcc;
-	}
-
-	@Override
-	public void setBcc(Map<String, String> bcc) {
-		this.bcc = bcc;
-	}
-}
-package com.bakerbeach.market.com.connectors.smtp;
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
