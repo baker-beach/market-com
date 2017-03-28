@@ -126,7 +126,7 @@ public class MandrillConnector implements ComConnector {
 		SendTemplateCall stc = new SendTemplateCall();
 		SendTemplateBody stb = stc.getSendTemplateBody();
 
-		stb.setTemplateName(templateResolver.getTemplate(MessageType.WELCOME,(String) data.get("shopCode")));
+		stb.setTemplateName(templateResolver.getTemplate(MessageType.WELCOME,(String) data.get("shop_code")));
 		stb.setSubject("Your Account on Perfect Moment");
 		Customer customer = (Customer) data.get("customer");
 
