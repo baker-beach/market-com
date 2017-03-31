@@ -7,7 +7,7 @@
 	    <version>1.0.0</version>
 	</parent>	
 	<artifactId>market-com</artifactId>
-	<version>1.0.3</version>
+	<version>1.1.0</version>
 	<name>market-com</name>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -40,12 +40,12 @@
 		<dependency>
 			<groupId>com.bakerbeach.market</groupId>
 			<artifactId>market-core-model</artifactId>
-			<version>[1.0.2,)</version>
+			<version>[1.1.8-SNAPSHOT]</version>
 		</dependency>
 		<dependency>
 			<groupId>com.bakerbeach.market</groupId>
 			<artifactId>market-com-api</artifactId>
-			<version>[1.0.1,1.1.0]</version>
+			<version>[1.1.0,1.2.0)</version>
 		</dependency>
 	</dependencies>
 </project>
