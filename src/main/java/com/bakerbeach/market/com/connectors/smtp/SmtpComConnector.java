@@ -48,7 +48,7 @@ public class SmtpComConnector implements ComConnector {
 			if (bcc.containsKey(messageType))
 				msg.addRecipients(Message.RecipientType.BCC, InternetAddress.parse(bcc.get(messageType), false));
 
-			msg.setSubject(renderService.render(dataMap, messageType+"subject"));
+			msg.setSubject(renderService.render(dataMap, messageType+"_subject"));
 			msg.setContent(renderService.render(dataMap, messageType), "text/html; charset=utf-8");
 
 			msg.setSentDate(new Date());

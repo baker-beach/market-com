@@ -11,17 +11,8 @@
 	<name>market-com</name>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<org.springframework.version>4.1.4.RELEASE</org.springframework.version>
-		<camel.version>2.15.2</camel.version>
-		<jackson.version>1.9.13</jackson.version>
-		<junit.version>4.10</junit.version>
 	</properties>
 	<dependencies>
-		<dependency>
-			<groupId>com.bakerbeach.market</groupId>
-			<artifactId>market-integration-core</artifactId>
-			<version>1.0.1</version>
-		</dependency>
 		<dependency>
 			<groupId>org.apache.velocity</groupId>
 			<artifactId>velocity</artifactId>
@@ -46,6 +37,11 @@
 			<groupId>com.bakerbeach.market</groupId>
 			<artifactId>market-com-api</artifactId>
 			<version>[1.1.0,1.2.0)</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>4.2.5.RELEASE</version>
 		</dependency>
 	</dependencies>
 </project>
