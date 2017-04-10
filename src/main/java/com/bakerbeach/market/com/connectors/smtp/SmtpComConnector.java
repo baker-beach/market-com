@@ -17,6 +17,8 @@ import com.bakerbeach.market.com.api.ComConnector;
 import com.bakerbeach.market.com.api.ComConnectorException;
 import com.bakerbeach.market.com.api.DataMapKeys;
 import com.bakerbeach.market.com.connectors.smtp.velocity.Formater;
+import com.bakerbeach.market.com.connectors.smtp.velocity.OrderContextHelper;
+import com.bakerbeach.market.core.api.model.Order;
 
 public class SmtpComConnector implements ComConnector {
 
@@ -40,6 +42,14 @@ public class SmtpComConnector implements ComConnector {
 
 		try {
 			dataMap.put("formater", new Formater());
+			
+			if(dataMap.containsKey("order")){
+				Map<String, Object> params = OrderContextHelper.buildRenderContext((Order)dataMap.get("order"));
+				for(String key : params.keySet()){
+					dataMap.put(key, params.get(key));
+				}
+			}
+			
 			Message msg = new MimeMessage(session);
 
 			msg.setFrom(new InternetAddress((String) properties.get("mail.smtp.sender")));
