@@ -9,11 +9,13 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Currency;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -31,6 +33,8 @@ import com.bakerbeach.market.core.api.model.CartItemQualifier;
 import com.bakerbeach.market.core.api.model.Customer;
 import com.bakerbeach.market.core.api.model.Order;
 import com.bakerbeach.market.core.api.model.OrderItem;
+import com.bakerbeach.market.core.api.model.TaxCode;
+import com.bakerbeach.market.core.api.model.Total;
 
 public class MandrillConnector implements ComConnector {
 
@@ -296,6 +300,8 @@ public class MandrillConnector implements ComConnector {
 		NumberFormat formatter = NumberFormat.getNumberInstance(locale);
 		formatter.setMinimumFractionDigits(2);
 		formatter.setMaximumFractionDigits(2);
+		
+		Currency currency = Currency.getInstance(order.getCurrencyCode());
 
 		BigDecimal productTotal = BigDecimal.ZERO;
 		List<String> qualifiers = Arrays.asList(CartItemQualifier.PRODUCT, CartItemQualifier.VPRODUCT);
@@ -323,9 +329,9 @@ public class MandrillConnector implements ComConnector {
 					item.put("quantity", orderItem.getQuantity());
 					item.put("gtin", orderItem.getGtin());
 
-					item.put("total_price", String.format("%1s&nbsp;%2s", order.getCurrencyCode(),
+					item.put("total_price", String.format("%1s&nbsp;%2s", currency.getSymbol(),
 							formatter.format(orderItem.getTotalPrice("std"))));
-					item.put("unit_price", String.format("%1s&nbsp;%2s", order.getCurrencyCode(),
+					item.put("unit_price", String.format("%1s&nbsp;%2s", currency.getSymbol(),
 							formatter.format(orderItem.getUnitPrice("std"))));
 
 					tmp.add(item);
@@ -443,19 +449,32 @@ public class MandrillConnector implements ComConnector {
 
 		item = new HashMap<String, Object>();
 		item.put("name", "product_total");
-		item.put("content", String.format("%1s&nbsp;%2s", order.getCurrencyCode(), formatter.format(productTotal)));
+		item.put("content", String.format("%1s&nbsp;%2s", currency.getSymbol(), formatter.format(productTotal)));
 		stb.getGlobalVars().add(item);
 
 		item = new HashMap<String, Object>();
 		item.put("name", "shipping_total");
-		item.put("content", String.format("%1s&nbsp;%2s", order.getCurrencyCode(), formatter.format(shippingTotal)));
+		item.put("content", String.format("%1s&nbsp;%2s", currency.getSymbol(), formatter.format(shippingTotal)));
 		stb.getGlobalVars().add(item);
 
 		item = new HashMap<String, Object>();
 		item.put("name", "order_total");
-		item.put("content", order.getCurrency() + " " + format.format(order.getTotal()));
+		item.put("content", String.format("%1s&nbsp;%2s", currency.getSymbol(), formatter.format(order.getTotal(true).getGross())));
 		stb.getGlobalVars().add(item);
 
+		item = new HashMap<String, Object>();
+		List<Object> content = new ArrayList<Object>();
+		item.put("name", "vat");
+		item.put("content", content);
+		for (Entry<TaxCode, ? extends Total.Line> entry : order.getTotal(true).getLines().entrySet()) {
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("taxPercent", entry.getValue().getTaxPercent());
+			map.put("tax", String.format("%1s&nbsp;%2s", currency.getSymbol(), formatter.format(entry.getValue().getTax())));
+			content.add(map);
+		}
+		stb.getGlobalVars().add(item);
+		
+		
 		return stc;
 	}
 
