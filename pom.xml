@@ -43,5 +43,5 @@
 			<artifactId>spring-web</artifactId>
 			<version>4.2.5.RELEASE</version>
 		</dependency>
-	</dependencies>
+	</dependencies><!--test--> 
 </project>
