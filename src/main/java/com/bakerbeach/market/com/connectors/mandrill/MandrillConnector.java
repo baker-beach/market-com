@@ -324,11 +324,15 @@ public class MandrillConnector implements ComConnector {
 					HashMap<String, Object> item = new HashMap<String, Object>();
 
 					item.putAll(orderItem.getTitle());
+					
+					item.putAll(orderItem.getAttributes());
+
+					
 					item.put("quantity", orderItem.getQuantity());
 					item.put("gtin", orderItem.getGtin());
 
-					item.put("total_price", String.format("%1s&nbsp;%2s", currency.getSymbol(), formatter.format(orderItem.getTotalPrice("std"))));
-					item.put("unit_price", String.format("%1s&nbsp;%2s", currency.getSymbol(), formatter.format(orderItem.getUnitPrice("std"))));
+					item.put("total_price", String.format("%1s %2s", currency.getSymbol(), formatter.format(orderItem.getTotalPrice("std"))));
+					item.put("unit_price", String.format("%1s %2s", currency.getSymbol(), formatter.format(orderItem.getUnitPrice("std"))));
 
 					tmp.add(item);
 				}
@@ -455,17 +459,17 @@ public class MandrillConnector implements ComConnector {
 
 		item = new HashMap<String, Object>();
 		item.put("name", "product_total");
-		item.put("content", String.format("%1s&nbsp;%2s", currency.getSymbol(), formatter.format(productTotal)));
+		item.put("content", String.format("%1s %2s", currency.getSymbol(), formatter.format(productTotal)));
 		stb.getGlobalVars().add(item);
 
 		item = new HashMap<String, Object>();
 		item.put("name", "shipping_total");
-		item.put("content", String.format("%1s&nbsp;%2s", currency.getSymbol(), formatter.format(shippingTotal)));
+		item.put("content", String.format("%1s %2s", currency.getSymbol(), formatter.format(shippingTotal)));
 		stb.getGlobalVars().add(item);
 
 		item = new HashMap<String, Object>();
 		item.put("name", "order_total");
-		item.put("content", String.format("%1s&nbsp;%2s", currency.getSymbol(), formatter.format(order.getTotal(true).getGross())));
+		item.put("content", String.format("%1s %2s", currency.getSymbol(), formatter.format(order.getTotal(true).getGross())));
 		stb.getGlobalVars().add(item);
 
 		item = new HashMap<String, Object>();
@@ -475,7 +479,7 @@ public class MandrillConnector implements ComConnector {
 		for (Entry<TaxCode, ? extends Total.Line> entry : order.getTotal(true).getLines().entrySet()) {
 			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("taxPercent", entry.getValue().getTaxPercent());
-			map.put("tax", String.format("%1s&nbsp;%2s", currency.getSymbol(), formatter.format(entry.getValue().getTax())));
+			map.put("tax", String.format("%1s %2s", currency.getSymbol(), formatter.format(entry.getValue().getTax())));
 			content.add(map);
 		}
 		stb.getGlobalVars().add(item);
