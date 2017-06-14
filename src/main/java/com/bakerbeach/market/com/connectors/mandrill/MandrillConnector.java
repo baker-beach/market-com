@@ -31,10 +31,10 @@ import com.bakerbeach.market.com.connectors.mandrill.call.SendTemplateCall;
 import com.bakerbeach.market.com.connectors.mandrill.call.body.SendTemplateBody;
 import com.bakerbeach.market.core.api.model.CartItemQualifier;
 import com.bakerbeach.market.core.api.model.Customer;
-import com.bakerbeach.market.core.api.model.Order;
-import com.bakerbeach.market.core.api.model.OrderItem;
 import com.bakerbeach.market.core.api.model.TaxCode;
 import com.bakerbeach.market.core.api.model.Total;
+import com.bakerbeach.market.order.api.model.Order;
+import com.bakerbeach.market.order.api.model.OrderItem;
 
 public class MandrillConnector implements ComConnector {
 

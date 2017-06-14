@@ -8,11 +8,11 @@ import java.util.Map;
 
 import com.bakerbeach.market.com.connectors.smtp.velocity.TotalImpl;
 import com.bakerbeach.market.com.connectors.smtp.velocity.TotalImpl.LineImpl;
-import com.bakerbeach.market.core.api.model.Order;
-import com.bakerbeach.market.core.api.model.OrderItem;
-import com.bakerbeach.market.core.api.model.OrderItem.OrderItemComponent;
-import com.bakerbeach.market.core.api.model.OrderItem.OrderItemOption;
-import com.bakerbeach.market.core.api.model.TaxCode;;
+import com.bakerbeach.market.core.api.model.TaxCode;
+import com.bakerbeach.market.order.api.model.Order;
+import com.bakerbeach.market.order.api.model.OrderItem;
+import com.bakerbeach.market.order.api.model.OrderItem.OrderItemComponent;
+import com.bakerbeach.market.order.api.model.OrderItem.OrderItemOption;;
 
 
 public class OrderContextHelper {

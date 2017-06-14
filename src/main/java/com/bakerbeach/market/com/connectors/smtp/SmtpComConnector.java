@@ -18,7 +18,7 @@ import com.bakerbeach.market.com.api.ComConnectorException;
 import com.bakerbeach.market.com.api.DataMapKeys;
 import com.bakerbeach.market.com.connectors.smtp.velocity.Formater;
 import com.bakerbeach.market.com.connectors.smtp.velocity.OrderContextHelper;
-import com.bakerbeach.market.core.api.model.Order;
+import com.bakerbeach.market.order.api.model.Order;
 
 public class SmtpComConnector implements ComConnector {
 
