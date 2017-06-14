@@ -486,32 +486,72 @@ public class MandrillConnector implements ComConnector {
 	private Call buildDispatchedMailCall(Map<String, Object> data) throws ComConnectorException {
 		SendTemplateCall stc = new SendTemplateCall();
 		SendTemplateBody stb = stc.getSendTemplateBody();
+
 		Order order = (Order) data.get("order");
-		stb.setTemplateName(templateResolver.getTemplate(MessageType.WELCOME, (String) data.get(DataMapKeys.SHOP_CODE)));
+		stb.setTemplateName(templateResolver.getTemplate(MessageType.DISPATCHED, (String) data.get(DataMapKeys.SHOP_CODE)));
 
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("d MMMMM yyyy");
-
-		stb.setSubject("[Perfect Moment] order information (#" + order.getId() + ") " + simpleDateFormat.format(order.getCreatedAt()));
-		Customer customer = (Customer) data.get("customer");
-
-		NumberFormat format = NumberFormat.getNumberInstance(Locale.US);
-		HashMap<String, Object> lines = new HashMap<String, Object>();
-		lines.put("name", "lines");
-		List<Object> tmp = new ArrayList<Object>();
-
-		BigDecimal productTotal = BigDecimal.ZERO;
-		for (OrderItem orderItem : order.getItems()) {
-			HashMap<String, Object> item = new HashMap<String, Object>();
-			item.put("description", orderItem.getTitle1() + " " + orderItem.getTitle2());
-			item.put("quantity", orderItem.getQuantity().intValue());
-			item.put("total", order.getCurrency() + " " + format.format(orderItem.getTotalPrice()));
-			productTotal = productTotal.add(orderItem.getTotalPrice());
-			tmp.add(item);
+		// TODO: get locale from order ----
+		Locale locale = Locale.GERMANY;
+		if ("PUMPKIN_COM".equals(order.getShopCode())) {
+			locale = Locale.UK;
 		}
-		lines.put("content", tmp);
-		stb.getGlobalVars().add(lines);
+
+		// SimpleDateFormat simpleDateFormat = new SimpleDateFormat("d MMMMM
+		// yyyy");
+
+		String subject = subjects.get(MessageType.DISPATCHED + "-" + (String) data.get(DataMapKeys.SHOP_CODE));
+
+		// MessageFormat.format(subject, order.getId(),
+		// simpleDateFormat.format(order.getCreatedAt()));
+
+		stb.setSubject(MessageFormat.format(subject, order.getId(), DateFormat.getDateInstance(DateFormat.SHORT, locale).format(order.getCreatedAt())));
+		Customer customer = (Customer) data.get("customer");
+		
+		stb.addRecipient(customer.getEmail(), null, "to");
+
+		String bccOrder = bcc.get(MessageType.ORDER);
+		if (bccOrder != null && !bccOrder.isEmpty()) {
+			for (String bccMail : bccOrder.split(",")) {
+				stb.addRecipient(bccMail, null, "bcc");
+			}
+		}
 
 		HashMap<String, Object> item = new HashMap<String, Object>();
+		item.put("name", "shipping_provider");
+		item.put("content", "DHL");
+		stb.getGlobalVars().add(item);
+		
+		item = new HashMap<String, Object>();
+		item.put("name", "tracking_number");
+		item.put("content", order.getPackets().get(0).getTrackingId());
+		stb.getGlobalVars().add(item);
+		
+		item = new HashMap<String, Object>();
+		item.put("name", "tracking_link");
+		item.put("content", "https://nolp.dhl.de/nextt-online-public/de/search?piececode="+order.getPackets().get(0).getTrackingId());
+		stb.getGlobalVars().add(item);
+		
+		item = new HashMap<String, Object>();
+		item.put("name", "first_name");
+		item.put("content", customer.getFirstName());
+		stb.getGlobalVars().add(item);
+		
+		item = new HashMap<String, Object>();
+		item.put("name", "customer_id");
+		item.put("content", order.getCustomerId());
+		stb.getGlobalVars().add(item);
+		
+		item = new HashMap<String, Object>();
+		item.put("name", "order_id");
+		item.put("content", order.getId());
+		stb.getGlobalVars().add(item);
+		
+		item = new HashMap<String, Object>();
+		item.put("name", "order_date");
+		item.put("content", DateFormat.getDateInstance(DateFormat.SHORT, locale).format(order.getCreatedAt()));
+		stb.getGlobalVars().add(item);
+
+		item = new HashMap<String, Object>();
 		item.put("name", "shipping_address_name");
 		item.put("content", order.getShippingAddress().getFirstName() + " " + order.getShippingAddress().getLastName());
 		stb.getGlobalVars().add(item);
@@ -535,75 +575,16 @@ public class MandrillConnector implements ComConnector {
 
 		item = new HashMap<String, Object>();
 		item.put("name", "shipping_address_line_3");
-		item.put("content", order.getShippingAddress().getCountryCode());
-		stb.getGlobalVars().add(item);
-
-		item = new HashMap<String, Object>();
-		item.put("name", "billing_address_name");
-		item.put("content", order.getBillingAddress().getFirstName() + " " + order.getBillingAddress().getLastName());
-		stb.getGlobalVars().add(item);
-		
-		if (order.getBillingAddress().getCompany() != null) {
-			item = new HashMap<String, Object>();
-			item.put("name", "billing_address_line_0");
-			item.put("content", order.getBillingAddress().getCompany());
-			stb.getGlobalVars().add(item);
+		if (countryCodes.containsKey(order.getShippingAddress().getCountryCode())) {
+			item.put("content", countryCodes.get(order.getShippingAddress().getCountryCode()));
+		} else {
+			item.put("content", order.getShippingAddress().getCountryCode());
 		}
-
-		item = new HashMap<String, Object>();
-		item.put("name", "billing_address_line_1");
-		item.put("content", order.getBillingAddress().getStreet1() + " " + order.getBillingAddress().getStreet2());
 		stb.getGlobalVars().add(item);
 
 		item = new HashMap<String, Object>();
-		item.put("name", "billing_address_line_2");
-		item.put("content", order.getBillingAddress().getPostcode() + " " + order.getBillingAddress().getCity());
-		stb.getGlobalVars().add(item);
-
-		item = new HashMap<String, Object>();
-		item.put("name", "billing_address_line_3");
-		item.put("content", order.getBillingAddress().getCountryCode());
-		stb.getGlobalVars().add(item);
-
-		item = new HashMap<String, Object>();
-		item.put("name", "billing_address_line_3");
-		item.put("content", order.getBillingAddress().getCountryCode());
-		stb.getGlobalVars().add(item);
-
-		item = new HashMap<String, Object>();
-		item.put("name", "customer_email");
-		item.put("content", customer.getEmail());
-		stb.getGlobalVars().add(item);
-
-		item = new HashMap<String, Object>();
-		item.put("name", "customer_phone");
+		item.put("name", "shipping_address_line_4");
 		item.put("content", order.getShippingAddress().getTelephone());
-		stb.getGlobalVars().add(item);
-
-		item = new HashMap<String, Object>();
-		item.put("name", "total");
-		item.put("content", order.getCurrency() + " " + format.format(order.getTotal()));
-		stb.getGlobalVars().add(item);
-
-		// item = new HashMap<String, Object>();
-		// item.put("name", "shipping");
-		// item.put("content", order.getCurrency() + " " +
-		// format.format(order.getShipping()));
-		// stb.getGlobalVars().add(item);
-
-		item = new HashMap<String, Object>();
-		item.put("name", "payment_mehtod");
-		item.put("content", "PayPal");
-		stb.getGlobalVars().add(item);
-
-		item = new HashMap<String, Object>();
-		item.put("name", "payment_mehtod");
-		item.put("content", "PayPal");
-		stb.getGlobalVars().add(item);
-
-		item = new HashMap<String, Object>();
-		item.put("name", "product_total");
-		item.put("content", order.getCurrency() + " " + format.format(productTotal));
 		stb.getGlobalVars().add(item);
 
 		return stc;
