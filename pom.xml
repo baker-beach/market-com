@@ -7,7 +7,7 @@
 	    <version>1.0.0</version>
 	</parent>	
 	<artifactId>market-com</artifactId>
-	<version>3.0.0</version>
+	<version>3.0.1</version>
 	<name>market-com</name>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
