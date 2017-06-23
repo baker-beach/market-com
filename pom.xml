@@ -6,8 +6,8 @@
 	    <artifactId>market-parent</artifactId>
 	    <version>1.0.0</version>
 	</parent>	
-	<artifactId>market-com</artifactId>
-	<version>3.0.1</version>
+	<artifactId>market-integration-com</artifactId>
+	<version>3.0.2</version>
 	<name>market-com</name>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -17,6 +17,11 @@
 			<groupId>org.apache.velocity</groupId>
 			<artifactId>velocity</artifactId>
 			<version>1.7</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-spring-integration</artifactId>
+			<version>2.19.0</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.mail</groupId>
@@ -47,6 +52,21 @@
 			<groupId>com.bakerbeach.market</groupId>
 			<artifactId>market-order-api</artifactId>
 			<version>[3.0.0,3.1.0)</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-spring-integration</artifactId>
+			<version>2.19.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.bakerbeach.market</groupId>
+			<artifactId>market-customer-api</artifactId>
+			<version>[3.0.0,3.1.0)</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<version>2.6</version>
 		</dependency>
 	</dependencies><!--test--> 
 </project>
