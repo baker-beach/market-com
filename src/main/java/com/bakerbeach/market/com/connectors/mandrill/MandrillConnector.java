@@ -6,7 +6,6 @@ import java.nio.charset.Charset;
 import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Currency;
@@ -221,6 +220,7 @@ public class MandrillConnector implements ComConnector {
 		return stc;
 	}
 
+	@SuppressWarnings("deprecation")
 	private Call buildOrderMailCall(Map<String, Object> data) throws ComConnectorException {
 		SendTemplateCall stc = new SendTemplateCall();
 		SendTemplateBody stb = stc.getSendTemplateBody();
@@ -281,7 +281,6 @@ public class MandrillConnector implements ComConnector {
 			stb.getGlobalVars().add(item);
 		}
 
-		NumberFormat format = NumberFormat.getNumberInstance(Locale.US);
 		HashMap<String, Object> lines = new HashMap<String, Object>();
 		lines.put("name", "lines");
 		List<Object> tmp = new ArrayList<Object>();
@@ -344,12 +343,12 @@ public class MandrillConnector implements ComConnector {
 				discountTotal = discountTotal.add(orderItem.getTotalPrice());
 			}
 		}
-		if (discountTotal.compareTo(BigDecimal.ZERO) != 0) {
-			HashMap<String, Object> discount = new HashMap<String, Object>();
-			discount.put("name", "discount_total");
-			discount.put("content", order.getCurrency() + " " + format.format(discountTotal));
-			stb.getGlobalVars().add(discount);
-		}
+
+		HashMap<String, Object> discount = new HashMap<String, Object>();
+		discount.put("name", "discount_total");
+		discount.put("content", order.getCurrency() + " " + formatter.format(discountTotal));
+		stb.getGlobalVars().add(discount);
+		
 
 		HashMap<String, Object> item = new HashMap<String, Object>();
 		item.put("name", "shipping_address_name");
