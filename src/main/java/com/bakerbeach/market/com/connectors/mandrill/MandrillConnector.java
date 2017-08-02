@@ -130,6 +130,8 @@ public class MandrillConnector implements ComConnector {
 			call = buildOrderMailCall(data);
 		} else if (MessageType.DISPATCHED.equals(messageType)) {
 			call = buildDispatchedMailCall(data);
+		} else if (MessageType.CANCELD.equals(messageType)) {
+			call = buildCanceldMailCall(data);
 		} else {
 			throw new ComConnectorException();
 		}
@@ -143,7 +145,8 @@ public class MandrillConnector implements ComConnector {
 		SendTemplateCall stc = new SendTemplateCall();
 		SendTemplateBody stb = stc.getSendTemplateBody();
 
-		stb.setTemplateName(templateResolver.getTemplate(MessageType.WELCOME, (String) data.get(DataMapKeys.SHOP_CODE)));
+		stb.setTemplateName(
+				templateResolver.getTemplate(MessageType.WELCOME, (String) data.get(DataMapKeys.SHOP_CODE)));
 		stb.setSubject(subjects.get(MessageType.WELCOME + "-" + (String) data.get(DataMapKeys.SHOP_CODE)));
 		Customer customer = (Customer) data.get("customer");
 
@@ -180,7 +183,8 @@ public class MandrillConnector implements ComConnector {
 		SendTemplateCall stc = new SendTemplateCall();
 		SendTemplateBody stb = stc.getSendTemplateBody();
 
-		stb.setTemplateName(templateResolver.getTemplate(MessageType.PASSWORD, (String) data.get(DataMapKeys.SHOP_CODE)));
+		stb.setTemplateName(
+				templateResolver.getTemplate(MessageType.PASSWORD, (String) data.get(DataMapKeys.SHOP_CODE)));
 		stb.setSubject(subjects.get(MessageType.PASSWORD + "-" + (String) data.get(DataMapKeys.SHOP_CODE)));
 		Customer customer = (Customer) data.get("customer");
 
@@ -242,7 +246,8 @@ public class MandrillConnector implements ComConnector {
 		// MessageFormat.format(subject, order.getId(),
 		// simpleDateFormat.format(order.getCreatedAt()));
 
-		stb.setSubject(MessageFormat.format(subject, order.getId(), DateFormat.getDateInstance(DateFormat.SHORT, locale).format(order.getCreatedAt())));
+		stb.setSubject(MessageFormat.format(subject, order.getId(),
+				DateFormat.getDateInstance(DateFormat.SHORT, locale).format(order.getCreatedAt())));
 		Customer customer = (Customer) data.get("customer");
 
 		{
@@ -326,8 +331,10 @@ public class MandrillConnector implements ComConnector {
 					item.put("quantity", orderItem.getQuantity());
 					item.put("gtin", orderItem.getGtin());
 
-					item.put("total_price", String.format("%1s&nbsp;%2s", currency.getSymbol(), formatter.format(orderItem.getTotalPrice("std"))));
-					item.put("unit_price", String.format("%1s&nbsp;%2s", currency.getSymbol(), formatter.format(orderItem.getUnitPrice("std"))));
+					item.put("total_price", String.format("%1s&nbsp;%2s", currency.getSymbol(),
+							formatter.format(orderItem.getTotalPrice("std"))));
+					item.put("unit_price", String.format("%1s&nbsp;%2s", currency.getSymbol(),
+							formatter.format(orderItem.getUnitPrice("std"))));
 
 					tmp.add(item);
 				}
@@ -348,7 +355,6 @@ public class MandrillConnector implements ComConnector {
 		discount.put("name", "discount_total");
 		discount.put("content", order.getCurrency() + " " + formatter.format(discountTotal));
 		stb.getGlobalVars().add(discount);
-		
 
 		HashMap<String, Object> item = new HashMap<String, Object>();
 		item.put("name", "shipping_address_name");
@@ -369,9 +375,11 @@ public class MandrillConnector implements ComConnector {
 
 		item = new HashMap<String, Object>();
 		item.put("name", "shipping_address_line_2");
-		String shippingAddressLine2Content = order.getShippingAddress().getPostcode().concat(" ").concat(order.getShippingAddress().getCity());
+		String shippingAddressLine2Content = order.getShippingAddress().getPostcode().concat(" ")
+				.concat(order.getShippingAddress().getCity());
 		if (StringUtils.isNotBlank(order.getShippingAddress().getRegion())) {
-			shippingAddressLine2Content = shippingAddressLine2Content.concat(", ").concat(order.getShippingAddress().getRegion());
+			shippingAddressLine2Content = shippingAddressLine2Content.concat(", ")
+					.concat(order.getShippingAddress().getRegion());
 		}
 		item.put("content", shippingAddressLine2Content);
 		stb.getGlobalVars().add(item);
@@ -409,9 +417,11 @@ public class MandrillConnector implements ComConnector {
 
 		item = new HashMap<String, Object>();
 		item.put("name", "billing_address_line_2");
-		String billingAddressLine2Content = order.getBillingAddress().getPostcode().concat(" ").concat(order.getBillingAddress().getCity());
+		String billingAddressLine2Content = order.getBillingAddress().getPostcode().concat(" ")
+				.concat(order.getBillingAddress().getCity());
 		if (StringUtils.isNotBlank(order.getBillingAddress().getRegion())) {
-			billingAddressLine2Content = billingAddressLine2Content.concat(", ").concat(order.getBillingAddress().getRegion());
+			billingAddressLine2Content = billingAddressLine2Content.concat(", ")
+					.concat(order.getBillingAddress().getRegion());
 		}
 		item.put("content", billingAddressLine2Content);
 		stb.getGlobalVars().add(item);
@@ -464,7 +474,8 @@ public class MandrillConnector implements ComConnector {
 
 		item = new HashMap<String, Object>();
 		item.put("name", "order_total");
-		item.put("content", String.format("%1s&nbsp;%2s", currency.getSymbol(), formatter.format(order.getTotal(true).getGross())));
+		item.put("content",
+				String.format("%1s&nbsp;%2s", currency.getSymbol(), formatter.format(order.getTotal(true).getGross())));
 		stb.getGlobalVars().add(item);
 
 		item = new HashMap<String, Object>();
@@ -474,11 +485,99 @@ public class MandrillConnector implements ComConnector {
 		for (Entry<TaxCode, ? extends Total.Line> entry : order.getTotal(true).getLines().entrySet()) {
 			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("taxPercent", entry.getValue().getTaxPercent());
-			map.put("tax", String.format("%1s&nbsp;%2s", currency.getSymbol(), formatter.format(entry.getValue().getTax())));
+			map.put("tax",
+					String.format("%1s&nbsp;%2s", currency.getSymbol(), formatter.format(entry.getValue().getTax())));
 			content.add(map);
 		}
 		stb.getGlobalVars().add(item);
 
+		return stc;
+	}
+
+	private Call buildCanceldMailCall(Map<String, Object> data) throws ComConnectorException {
+		SendTemplateCall stc = new SendTemplateCall();
+		SendTemplateBody stb = stc.getSendTemplateBody();
+
+		Order order = (Order) data.get("order");
+		stb.setTemplateName(templateResolver.getTemplate(MessageType.ORDER, (String) data.get(DataMapKeys.SHOP_CODE)));
+
+		// TODO: get locale from order ----
+		Locale locale = Locale.GERMANY;
+		if ("PUMPKIN_COM".equals(order.getShopCode())) {
+			locale = Locale.UK;
+		}
+
+		// SimpleDateFormat simpleDateFormat = new SimpleDateFormat("d MMMMM
+		// yyyy");
+
+		String subject = subjects.get(MessageType.ORDER + "-" + (String) data.get(DataMapKeys.SHOP_CODE));
+
+		// MessageFormat.format(subject, order.getId(),
+		// simpleDateFormat.format(order.getCreatedAt()));
+
+		stb.setSubject(MessageFormat.format(subject, order.getId(),
+				DateFormat.getDateInstance(DateFormat.SHORT, locale).format(order.getCreatedAt())));
+		Customer customer = (Customer) data.get("customer");
+
+		{
+			HashMap<String, Object> item = new HashMap<String, Object>();
+			item = new HashMap<String, Object>();
+			item.put("name", "customer_id");
+			item.put("content", customer.getId());
+			stb.getGlobalVars().add(item);
+
+			item = new HashMap<String, Object>();
+			item.put("name", "customer_email");
+			item.put("content", customer.getEmail());
+			stb.getGlobalVars().add(item);
+
+			item = new HashMap<String, Object>();
+			item.put("name", "first_name");
+			item.put("content", customer.getFirstName());
+			stb.getGlobalVars().add(item);
+
+			item = new HashMap<String, Object>();
+			item.put("name", "last_name");
+			item.put("content", customer.getLastName());
+			stb.getGlobalVars().add(item);
+		}
+
+		{
+			HashMap<String, Object> item = new HashMap<String, Object>();
+			item = new HashMap<String, Object>();
+			item.put("name", "order_id");
+			item.put("content", order.getId());
+			stb.getGlobalVars().add(item);
+
+			item = new HashMap<String, Object>();
+			item.put("name", "order_date");
+			item.put("content", DateFormat.getDateInstance(DateFormat.SHORT, locale).format(order.getCreatedAt()));
+			stb.getGlobalVars().add(item);
+			
+			item = new HashMap<String, Object>();
+			item.put("name", "payment_provider");
+			if(order.getPaymentCode().equals("PAYPAL_ONE_TIME"))
+				item.put("content", "PayPal");
+			else
+				item.put("content", "Concardis");
+			stb.getGlobalVars().add(item);
+		}
+
+		HashMap<String, Object> lines = new HashMap<String, Object>();
+		lines.put("name", "lines");
+		List<Object> tmp = new ArrayList<Object>();
+
+		stb.addRecipient(customer.getEmail(), null, "to");
+
+		String bccOrder = bcc.get(MessageType.ORDER);
+		if (bccOrder != null && !bccOrder.isEmpty()) {
+			for (String bccMail : bccOrder.split(",")) {
+				stb.addRecipient(bccMail, null, "bcc");
+			}
+		}
+
+		lines.put("content", tmp);
+		stb.getGlobalVars().add(lines);
 		return stc;
 	}
 
@@ -487,7 +586,8 @@ public class MandrillConnector implements ComConnector {
 		SendTemplateBody stb = stc.getSendTemplateBody();
 
 		Order order = (Order) data.get("order");
-		stb.setTemplateName(templateResolver.getTemplate(MessageType.DISPATCHED, (String) data.get(DataMapKeys.SHOP_CODE)));
+		stb.setTemplateName(
+				templateResolver.getTemplate(MessageType.DISPATCHED, (String) data.get(DataMapKeys.SHOP_CODE)));
 
 		// TODO: get locale from order ----
 		Locale locale = Locale.GERMANY;
@@ -503,9 +603,10 @@ public class MandrillConnector implements ComConnector {
 		// MessageFormat.format(subject, order.getId(),
 		// simpleDateFormat.format(order.getCreatedAt()));
 
-		stb.setSubject(MessageFormat.format(subject, order.getId(), DateFormat.getDateInstance(DateFormat.SHORT, locale).format(order.getCreatedAt())));
+		stb.setSubject(MessageFormat.format(subject, order.getId(),
+				DateFormat.getDateInstance(DateFormat.SHORT, locale).format(order.getCreatedAt())));
 		Customer customer = (Customer) data.get("customer");
-		
+
 		stb.addRecipient(customer.getEmail(), null, "to");
 
 		String bccOrder = bcc.get(MessageType.ORDER);
@@ -519,32 +620,33 @@ public class MandrillConnector implements ComConnector {
 		item.put("name", "shipping_provider");
 		item.put("content", "DHL");
 		stb.getGlobalVars().add(item);
-		
+
 		item = new HashMap<String, Object>();
 		item.put("name", "tracking_number");
 		item.put("content", order.getPackets().get(0).getTrackingId());
 		stb.getGlobalVars().add(item);
-		
+
 		item = new HashMap<String, Object>();
 		item.put("name", "tracking_link");
-		item.put("content", "https://nolp.dhl.de/nextt-online-public/de/search?piececode="+order.getPackets().get(0).getTrackingId());
+		item.put("content", "https://nolp.dhl.de/nextt-online-public/de/search?piececode="
+				+ order.getPackets().get(0).getTrackingId());
 		stb.getGlobalVars().add(item);
-		
+
 		item = new HashMap<String, Object>();
 		item.put("name", "first_name");
 		item.put("content", customer.getFirstName());
 		stb.getGlobalVars().add(item);
-		
+
 		item = new HashMap<String, Object>();
 		item.put("name", "customer_id");
 		item.put("content", order.getCustomerId());
 		stb.getGlobalVars().add(item);
-		
+
 		item = new HashMap<String, Object>();
 		item.put("name", "order_id");
 		item.put("content", order.getId());
 		stb.getGlobalVars().add(item);
-		
+
 		item = new HashMap<String, Object>();
 		item.put("name", "order_date");
 		item.put("content", DateFormat.getDateInstance(DateFormat.SHORT, locale).format(order.getCreatedAt()));
@@ -554,7 +656,7 @@ public class MandrillConnector implements ComConnector {
 		item.put("name", "shipping_address_name");
 		item.put("content", order.getShippingAddress().getFirstName() + " " + order.getShippingAddress().getLastName());
 		stb.getGlobalVars().add(item);
-		
+
 		if (order.getShippingAddress().getCompany() != null) {
 			item = new HashMap<String, Object>();
 			item.put("name", "shipping_address_line_0");
