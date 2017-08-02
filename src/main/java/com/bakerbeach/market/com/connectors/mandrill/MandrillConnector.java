@@ -131,7 +131,7 @@ public class MandrillConnector implements ComConnector {
 		} else if (MessageType.DISPATCHED.equals(messageType)) {
 			call = buildDispatchedMailCall(data);
 		} else if (MessageType.CANCELD.equals(messageType)) {
-			call = buildCanceldMailCall(data);
+			call = buildCanceledMailCall(data);
 		} else {
 			throw new ComConnectorException();
 		}
@@ -494,7 +494,7 @@ public class MandrillConnector implements ComConnector {
 		return stc;
 	}
 
-	private Call buildCanceldMailCall(Map<String, Object> data) throws ComConnectorException {
+	private Call buildCanceledMailCall(Map<String, Object> data) throws ComConnectorException {
 		SendTemplateCall stc = new SendTemplateCall();
 		SendTemplateBody stb = stc.getSendTemplateBody();
 
