@@ -66,7 +66,7 @@ public class OrderEventHandler extends AbstractHandler {
 		}
 	}
 	
-	public void canceld(Exchange ex) {
+	public void canceled(Exchange ex) {
 		try {
 			@SuppressWarnings("unchecked")
 			Map<String, Object> payload = (Map<String, Object>) getPayload(ex.getIn());

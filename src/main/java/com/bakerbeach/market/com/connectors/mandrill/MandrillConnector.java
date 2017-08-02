@@ -499,7 +499,7 @@ public class MandrillConnector implements ComConnector {
 		SendTemplateBody stb = stc.getSendTemplateBody();
 
 		Order order = (Order) data.get("order");
-		stb.setTemplateName(templateResolver.getTemplate(MessageType.ORDER, (String) data.get(DataMapKeys.SHOP_CODE)));
+		stb.setTemplateName(templateResolver.getTemplate(MessageType.CANCELD, (String) data.get(DataMapKeys.SHOP_CODE)));
 
 		// TODO: get locale from order ----
 		Locale locale = Locale.GERMANY;
@@ -510,7 +510,7 @@ public class MandrillConnector implements ComConnector {
 		// SimpleDateFormat simpleDateFormat = new SimpleDateFormat("d MMMMM
 		// yyyy");
 
-		String subject = subjects.get(MessageType.ORDER + "-" + (String) data.get(DataMapKeys.SHOP_CODE));
+		String subject = subjects.get(MessageType.CANCELD + "-" + (String) data.get(DataMapKeys.SHOP_CODE));
 
 		// MessageFormat.format(subject, order.getId(),
 		// simpleDateFormat.format(order.getCreatedAt()));
@@ -569,7 +569,7 @@ public class MandrillConnector implements ComConnector {
 
 		stb.addRecipient(customer.getEmail(), null, "to");
 
-		String bccOrder = bcc.get(MessageType.ORDER);
+		String bccOrder = bcc.get(MessageType.CANCELD);
 		if (bccOrder != null && !bccOrder.isEmpty()) {
 			for (String bccMail : bccOrder.split(",")) {
 				stb.addRecipient(bccMail, null, "bcc");
